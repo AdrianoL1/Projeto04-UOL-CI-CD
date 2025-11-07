@@ -26,6 +26,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}
 
   update-manifests:
+    needs: docker
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -54,6 +55,8 @@ jobs:
           delete-branch: false
 
       - name: Enable Pull Request Automerge
-        run: gh pr merge --merge --auto --delete-branch "${{ steps.create-pr.outputs.pull-request-number }}"
+        run: |
+          cd projeto-cicd
+          gh pr merge --merge --auto --delete-branch "${{ steps.create-pr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
