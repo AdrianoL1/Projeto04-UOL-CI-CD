@@ -1,6 +1,7 @@
 name: Build and Deploy to Docker Hub
 on:
-  pull_request:
+  workflow_dispatch:
+  push:
     branches:
       - "main"
 jobs:
@@ -21,6 +22,38 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/python-api:latest
-            ${{ secrets.DOCKER_USERNAME }}/python-api:${{ github.run_id }}
+            ${{ secrets.DOCKER_USERNAME }}/books-api:latest
+            ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}
 
+  update-manifests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Manifests Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.REPOSITORY }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: projeto-cicd
+
+      - name: Update Docker image tag
+        run: |
+          cd projeto-cicd
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/books-api:.*|image: ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}|" k8s/deployment/api-deployment.yml
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: projeto-cicd
+          commit-message: "chore: update Docker image to version v${{ github.run_number }}"
+          branch: update-image-${{ github.run_number }}
+          title: "Update image to version ${{ github.run_number }}"
+          base: main
+          delete-branch: false
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --merge --auto --delete-branch "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
