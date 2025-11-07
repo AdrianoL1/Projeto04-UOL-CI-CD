@@ -43,7 +43,9 @@ jobs:
         run: |
           cd projeto-cicd
           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/books-api:.*|image: ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}|" k8s/deployment/api-deployment.yml
+      
       - name: Create Pull Request
+        id: create-pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
