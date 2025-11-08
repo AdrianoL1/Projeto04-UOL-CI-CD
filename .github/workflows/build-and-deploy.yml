@@ -42,7 +42,7 @@ jobs:
       - name: Update Docker image tag
         run: |
           cd projeto-cicd
-          sed -i 's|image: .*/books-api:.*|image: ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}|' k8s/deployment/api-deployment.yml
+          sed -i 's|image: .*/books-api:.*|image: ${{ secrets.DOCKER_USERNAME }}/books-api:v${{ github.run_number }}|' k8s/api-deployment.yml
       
       - name: Create Pull Request
         id: create-pr
