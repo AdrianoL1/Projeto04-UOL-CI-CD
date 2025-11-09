@@ -469,9 +469,9 @@ spec:
 ```
 kubectl port-forward -n argocd svc/books-service 8081:8080
 ```
-- Após isso, basta ir até o [localhost:3000](http:localhost:8081) e poderemos ver a página inicial da aplicação.
+- Após isso, basta ir até o [localhost:8081](http:localhost:8081) e poderemos ver a página inicial da aplicação.
 
-![Tela app](https://github.com/user-attachments/assets/3b6babb9-cc6d-4bf2-9ee0-f7f1cd2c44fc
+![Tela app](https://github.com/user-attachments/assets/81bfad73-f1a5-48aa-b838-fa52ab4dc0c5)
 
 - Também é possível testar a API através do Swagger.
 
