@@ -1,12 +1,16 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fake_db import Books
 
 app = FastAPI()
 books = Books()
 
 @app.get("/")
-def read_root():
+def redirect():
+    return RedirectResponse(url="/docs")
+
+@app.get("/books")
+def list_all():
     return JSONResponse(content=books.list_all(), status_code=200)
 
 @app.post("/books")
